@@ -44,3 +44,17 @@ Thumbs.db
 # Hidden grading — do NOT distribute to students
 data/grading/
 configs/grading.yaml
+
+test.md
+
+# Agent and Spec folders
+openspec/
+.agent/
+
+# Local artifacts and databases
+*.db
+graph_diagram.md
+reports/*_hidden.md
+configs/*_hidden.yaml
+data/sample/*_hidden.jsonl
+outputs/*_hidden.json

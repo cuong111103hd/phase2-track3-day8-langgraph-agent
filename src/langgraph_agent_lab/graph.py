@@ -20,23 +20,22 @@ from .nodes import (
     retry_or_fallback_node,
     risky_action_node,
     tool_node,
+    shipping_tool_node,
+    inventory_tool_node,
+    fan_out_node,
 )
-from .routing import route_after_approval, route_after_classify, route_after_evaluate, route_after_retry
+from .routing import (
+    route_after_approval,
+    route_after_classify,
+    route_after_evaluate,
+    route_after_retry,
+    route_to_parallel_tools,
+)
 from .state import AgentState
 
 
 def build_graph(checkpointer: Any | None = None):
-    """Build and compile the LangGraph workflow.
-
-    TODO(student): review the architecture and modify nodes/edges only with a clear reason.
-    Required behaviors:
-    - intake -> classify (normalization + routing)
-    - classify routes to answer/tool/clarify/risky/retry
-    - tool -> evaluate creates the retry loop (slide: "done?" check)
-    - risky path requires approval before tool/action
-    - retry loop bounded by max_attempts -> dead_letter on exhaustion
-    - all paths eventually reach finalize -> END
-    """
+    """Build and compile the LangGraph workflow."""
     try:
         from langgraph.graph import END, START, StateGraph
     except Exception as exc:  # pragma: no cover - helpful install error
@@ -53,12 +52,26 @@ def build_graph(checkpointer: Any | None = None):
     graph.add_node("approval", approval_node)
     graph.add_node("retry", retry_or_fallback_node)
     graph.add_node("dead_letter", dead_letter_node)
+    graph.add_node("shipping_tool", shipping_tool_node)
+    graph.add_node("inventory_tool", inventory_tool_node)
+    graph.add_node("fan_out", fan_out_node)
     graph.add_node("finalize", finalize_node)
 
     graph.add_edge(START, "intake")
     graph.add_edge("intake", "classify")
     graph.add_conditional_edges("classify", route_after_classify)
+    
+    # Fan-out logic: if route was TOOL, we go to fan_out first
+    # In routing.py, Route.TOOL maps to "tool". I'll change it to "fan_out" in mapping or here.
+    # Actually, I'll change the mapping in routing.py or just override here.
+    
     graph.add_edge("tool", "evaluate")
+    graph.add_edge("shipping_tool", "evaluate")
+    graph.add_edge("inventory_tool", "evaluate")
+    
+    graph.add_edge("fan_out", "evaluate") # Fallback or sink
+    graph.add_conditional_edges("fan_out", route_to_parallel_tools)
+    
     graph.add_conditional_edges("evaluate", route_after_evaluate)
     graph.add_edge("clarify", "finalize")
     graph.add_edge("risky_action", "approval")

@@ -39,10 +39,11 @@ class ApprovalDecision(BaseModel):
 
 
 class AgentState(TypedDict, total=False):
-    """LangGraph state.
+    """LangGraph state for the support-ticket agent.
 
-    TODO(student): decide which fields should be append-only and which should be overwritten.
-    The current annotations give a safe starting point for auditability.
+    State fields behavior:
+    - Overwritten (default): route, risk_level, attempt, evaluation_result, etc.
+    - Append-only (Annotated with add): messages, tool_results, errors, events.
     """
 
     thread_id: str
@@ -56,9 +57,10 @@ class AgentState(TypedDict, total=False):
     pending_question: str | None
     proposed_action: str | None
     approval: dict[str, Any] | None
-    evaluation_result: str | None
+    evaluation_result: str | None  # Key field for retry loop gate
     messages: Annotated[list[str], add]
     tool_results: Annotated[list[str], add]
+    human_feedback: Annotated[list[str], add]
     errors: Annotated[list[str], add]
     events: Annotated[list[dict[str, Any]], add]
 
@@ -97,6 +99,7 @@ def initial_state(scenario: Scenario) -> AgentState:
         "evaluation_result": None,
         "messages": [],
         "tool_results": [],
+        "human_feedback": [],
         "errors": [],
         "events": [],
     }
