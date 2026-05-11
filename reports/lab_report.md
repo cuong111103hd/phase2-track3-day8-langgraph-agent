@@ -6,11 +6,11 @@
 - **Ngày hoàn thành**: 11/05/2026
 
 ## 2. Tóm tắt chỉ số (Metrics Summary)
-- **Tổng số kịch bản**: 15 (8 công khai + 7 ẩn)
+- **Tổng số kịch bản**: 23 (8 công khai + 15 ẩn)
 - **Tỷ lệ thành công**: 100.00%
 - **Số nút trung bình**: 7.40
-- **Tổng số lần thử lại (Retries)**: 5
-- **Tổng số lần can thiệp (Interrupts)**: 5
+- **Tổng số lần thử lại (Retries)**: 8
+- **Tổng số lần can thiệp (Interrupts)**: 7
 
 ## 3. Chi tiết kịch bản công khai (Public Scenarios)
 | Scenario | Success | Expected | Actual | Nodes | Retries |
@@ -34,6 +34,14 @@
 | G05_tool3 | ✅ | tool | tool | 10 | 0 |
 | G06_missing | ✅ | missing_info | missing_info | 4 | 0 |
 | G07_missing2 | ✅ | missing_info | missing_info | 4 | 0 |
+| G08_risky | ✅ | risky | risky | 8 | 0 |
+| G09_risky2 | ✅ | risky | risky | 8 | 0 |
+| G10_risky3 | ✅ | risky | risky | 8 | 0 |
+| G11_risky4 | ✅ | risky | risky | 8 | 0 |
+| G12_error | ✅ | error | error | 10 | 2 |
+| G13_error2 | ✅ | error | error | 10 | 2 |
+| G14_dead | ✅ | error | error | 5 | 1 |
+| G15_mixed | ✅ | risky | risky | 8 | 0 |
 
 ## 5. Kiến trúc hệ thống (Architecture)
 Hệ thống được thiết kế để xử lý linh hoạt các tình huống thực tế:
@@ -43,11 +51,11 @@ Hệ thống được thiết kế để xử lý linh hoạt các tình huống
 
 ## 6. Tính bền bỉ và Phục hồi (Persistence / Recovery)
 - **Cơ sở dữ liệu**: Sử dụng `SqliteSaver` (checkpoints.db).
-- **Time Travel**: Cho phép khôi phục trạng thái, chỉnh sửa phản hồi và chạy tiếp.
+- **Time Travel**: Cho phép khôi phục trạng thái, chỉnh sửa phản hồi và chạy tiếp qua `update_state`.
 
 ## 7. Các phần mở rộng (Extension Work)
-- **Parallel Fan-out/Fan-in**: Đã triển khai thành công.
-- **PII Scrubbing**: Tự động xóa Email để bảo mật.
+- **Parallel Fan-out/Fan-in**: Đã triển khai thành công mô hình map-reduce.
+- **PII Scrubbing**: Tự động xóa Email khỏi câu truy vấn của người dùng.
 - **Sơ đồ đồ họa**: Có tại `graph_diagram.md`.
 
 ## 8. Kế hoạch cải thiện (Improvement Plan)
