@@ -1,7 +1,7 @@
 # Báo cáo Lab Ngày 08 - Hệ thống Điều phối Agent với LangGraph
 
 ## 1. Nhóm / Sinh viên
-- **Họ và tên**: Cuong
+- **Họ và tên**: Nguyễn Đức Cường
 - **Mã nguồn**: phase2-track3-day8-langgraph-agent
 - **Ngày hoàn thành**: 11/05/2026
 
